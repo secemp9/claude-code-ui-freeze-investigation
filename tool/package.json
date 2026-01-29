@@ -1,23 +1,29 @@
 {
-  "name": "ast-deobf-tools",
+  "name": "bundle-splitter",
   "version": "1.0.0",
-  "description": "JavaScript/Node.js deobfuscation toolkit using AST (Abstract Syntax Tree) analysis. A collection of tools for parsing, splitting, analyzing, verifying, and reverse-engineering obfuscated JavaScript code.",
-  "main": "analyze-packages.js",
+  "description": "AST-based JavaScript bundle splitter. Extracts individual modules from esbuild/webpack bundles for analysis.",
+  "main": "generic-dependency-splitter.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "split": "node generic-dependency-splitter.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/secemp9/ast-deobf-tools.git"
+    "url": "git+https://github.com/secemp9/claude-code-ui-freeze-investigation.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "ast",
+    "babel",
+    "deobfuscation",
+    "bundle-splitter",
+    "reverse-engineering"
+  ],
+  "author": "secemp9",
+  "license": "MIT",
   "type": "module",
   "bugs": {
-    "url": "https://github.com/secemp9/ast-deobf-tools/issues"
+    "url": "https://github.com/secemp9/claude-code-ui-freeze-investigation/issues"
   },
-  "homepage": "https://github.com/secemp9/ast-deobf-tools#readme",
+  "homepage": "https://github.com/secemp9/claude-code-ui-freeze-investigation#readme",
   "dependencies": {
     "@babel/generator": "^7.28.6",
     "@babel/parser": "^7.28.6",
