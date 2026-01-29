@@ -389,27 +389,26 @@ Simple, but critical. It:
 
 ### How to Verify Yourself
 
-All claims can be verified:
+All claims can be verified. Clone the repo and run:
 
 ```bash
-# 1. Get the original bundle
-npm pack @anthropic-ai/claude-code --pack-destination .
-tar -xzf anthropic-ai-claude-code-2.1.23.tgz
+git clone https://github.com/secemp9/claude-code-ui-freeze-investigation
+cd claude-code-ui-freeze-investigation
 
-# 2. Search for Task tool code
-grep -n "subagent_type" package/cli.js
+# 1. Run both versions
+node original/cli.js --version     # Original: 2.1.23
+node split/index.js --version      # Patched: 2.1.23 (identical)
+
+# 2. Search for Task tool code in original
+grep -n "subagent_type" original/cli.js
 # → Found at position ~7.3MB into the bundle
 
 # 3. Compare yield patterns
-grep -c "setTimeout" package/cli.js           # Original
-grep -c "setTimeout" output/split/modules/dZ1.js  # Patched
+grep -c "setTimeout" original/cli.js              # Original: few
+grep -c "setTimeout" split/modules/dZ1.js         # Patched: has yields
 
-# 4. Run both versions
-node package/cli.js --version      # Original: 2.1.23
-node output/split/index.js --version   # Patched: 2.1.23 (identical)
-
-# 5. Run the test suite
-node definitive-comparison.js
+# 4. Run the test suite
+node tests/definitive-comparison.js
 ```
 
 ### Test Files Included
@@ -450,7 +449,7 @@ I could be totally wrong about the cause. But even if I am, the fix works, and m
 
 **After the fix:** Max ~500ms per operation, React guaranteed to render between operations
 
-The patched code lives at `/home/nourdine/claude_testbed/output/split/`. It passes all original tests plus my verification suite.
+The patched code is available at **[github.com/secemp9/claude-code-ui-freeze-investigation](https://github.com/secemp9/claude-code-ui-freeze-investigation)**. It passes all original tests plus my verification suite.
 
 **Total investigation effort:**
 - 44 subagents across 11 rounds of verification
@@ -461,7 +460,7 @@ The patched code lives at `/home/nourdine/claude_testbed/output/split/`. It pass
 
 1. **If you're affected:** The fix is documented. Apply it to your local installation or wait for Anthropic to patch it.
 
-2. **If you're interested in the tooling:** `ast-deobf-tools` is available for your own reverse engineering projects.
+2. **If you're interested in the tooling:** [`ast-deobf-tools`](https://github.com/secemp9/ast-deobf-tools) is available for your own reverse engineering projects.
 
 3. **If you're using AI to write code:** Remember this case. Verify the parts that require deep runtime understanding.
 
@@ -490,11 +489,11 @@ The patched code lives at `/home/nourdine/claude_testbed/output/split/`. It pass
 
 ## Tools & References
 
-- **ast-deobf-tools** - Custom AST-based JavaScript deobfuscation toolkit
+- **[ast-deobf-tools](https://github.com/secemp9/ast-deobf-tools)** - Custom AST-based JavaScript deobfuscation toolkit
 - **generic-dependency-splitter.js** - Module extraction with hash verification
 - **Babel** - JavaScript parsing and AST manipulation
 - **Node.js Event Loop** - [Official Documentation](https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/)
-- **Full Investigation Report** - `/claude-code-ui-freeze-investigation.md` (500+ lines, every fix documented)
+- **[Full Investigation Repo](https://github.com/secemp9/claude-code-ui-freeze-investigation)** - Original bundle, split version, patches, and tests
 
 ---
 
