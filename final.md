@@ -389,12 +389,9 @@ Simple, but critical. It:
 
 ### How to Verify Yourself
 
-All claims can be verified. Clone the repo and run:
+All claims can be verified. The repo includes the original bundle, the full split version, and test scripts:
 
 ```bash
-git clone https://github.com/secemp9/claude-code-ui-freeze-investigation
-cd claude-code-ui-freeze-investigation
-
 # 1. Run both versions
 node original/cli.js --version     # Original: 2.1.23
 node split/index.js --version      # Patched: 2.1.23 (identical)
@@ -449,7 +446,7 @@ I could be totally wrong about the cause. But even if I am, the fix works, and m
 
 **After the fix:** Max ~500ms per operation, React guaranteed to render between operations
 
-The patched code is available at **[github.com/secemp9/claude-code-ui-freeze-investigation](https://github.com/secemp9/claude-code-ui-freeze-investigation)**. It passes all original tests plus my verification suite.
+The patched code is included in the repo alongside this post. It passes all original tests plus my verification suite.
 
 **Total investigation effort:**
 - 44 subagents across 11 rounds of verification
@@ -489,11 +486,10 @@ The patched code is available at **[github.com/secemp9/claude-code-ui-freeze-inv
 
 ## Tools & References
 
-- **[ast-deobf-tools](https://github.com/secemp9/ast-deobf-tools)** - Custom AST-based JavaScript deobfuscation toolkit
-- **generic-dependency-splitter.js** - Module extraction with hash verification
+- **[ast-deobf-tools](https://github.com/secemp9/ast-deobf-tools)** - Custom AST-based JavaScript deobfuscation toolkit I built for this and other reverse engineering projects
+- **generic-dependency-splitter.js** - The main splitting tool, part of ast-deobf-tools
 - **Babel** - JavaScript parsing and AST manipulation
 - **Node.js Event Loop** - [Official Documentation](https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/)
-- **[Full Investigation Repo](https://github.com/secemp9/claude-code-ui-freeze-investigation)** - Original bundle, split version, patches, and tests
 
 ---
 
