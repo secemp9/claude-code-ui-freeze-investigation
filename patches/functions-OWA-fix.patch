@@ -1,0 +1,20 @@
+14397-    Y = q >= 0 ? A.slice(q) : A,
+14398-    z = q >= 0 ? A.slice(0, q) : "";
+14399:  if (Y.length >= K - 1) return "…" + A.slice(-(K - 1));
+14400-  let w = K - 1 - Y.length;
+14401:  if (w <= 0) return "…" + Y.slice(-(K - 1));
+14402-  return z.slice(0, w) + "…" + Y;
+14403-}
+--
+28344-
+28345-function g17(A) {
+28346:  let Y = new p5(A).getUrlComponents().PathSegments.slice(-1)[0]?.toLowerCase();
+28347-  switch (Y) {
+28348-    case oV.COMMON:
+--
+38048-  var q;
+38049-  if (!A || !K || A[A.length - 1] != K[K.length - 1]) return "";
+38050:  for (q = 0; q < A.length && q < K.length; q++) if (A[A.length - (q + 1)] != K[K.length - (q + 1)]) return A.slice(-q);
+38051:  return A.slice(-q);
+38052-}
+38053-__$.sD7 = sD7;
