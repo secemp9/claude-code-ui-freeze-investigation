@@ -193,13 +193,30 @@ Node.js processes callbacks in phases:
 
 React/Ink (Claude Code's terminal UI) uses a **32ms throttle implemented with `setTimeout`**. Renders are scheduled in the **timers phase**.
 
-But Claude Code's yields used `setImmediate`, which runs in the **check phase**.
+### What I Initially Thought (Partially Wrong)
 
-**Here's the bug:** Multiple `setImmediate` callbacks can run consecutively in phase 5 without the event loop ever cycling back to phase 1 where React's renders are scheduled.
+I initially believed that `setImmediate` yields could "starve" the timers phase by running consecutively in phase 5. But that's not quite right - the event loop cycles through ALL phases each iteration: 1→2→3→4→5→6→1→... You can't get permanently stuck in one phase.
 
-They were yielding to the event loop, but to the *wrong phase*. React was starved. The UI froze.
+### What's Actually Happening
 
-At least, that's my theory. The behavior matches, the fix works, but I can't be 100% certain this is the *only* cause without access to Anthropic's internal telemetry.
+The key insight comes from [this Stack Overflow discussion](https://stackoverflow.com/questions/24117267/nodejs-settimeoutfn-0-vs-setimmediatefn/24119936#24119936) about `setTimeout` vs `setImmediate` performance:
+
+```
+setImmediate() x 914 ops/sec
+setTimeout(,0) x 445 ops/sec
+```
+
+`setImmediate` is roughly **2x faster** than `setTimeout(0)`. This sounds good, but for UI responsiveness it's actually **worse**.
+
+Here's why: `setTimeout(0)` has a minimum delay of ~1-4ms due to timer resolution. This "forced delay" is a feature, not a bug:
+
+1. **With `setImmediate`**: Your code yields and resumes almost instantly (~1ms). You dominate the CPU, giving React minimal time to actually execute renders.
+
+2. **With `setTimeout(0)`**: Each yield takes ~1-4ms. This "breathing room" gives React's throttled render callbacks time to actually run.
+
+**The real bug:** The original code had **zero yields at all**. Adding ANY yield would help. But `setTimeout(0)`'s minimum delay makes it a better choice than `setImmediate` because it gives React more breathing room between your operations.
+
+This is still my best interpretation. The behavior matches, the fix works, but I acknowledge I could be wrong about the exact mechanism.
 
 ---
 
@@ -210,10 +227,10 @@ I applied seven fixes. Some of these might be overkill - I was being paranoid af
 ### Fix 1: setTimeout Instead of setImmediate
 
 ```javascript
-// BEFORE (wrong phase):
+// BEFORE (too fast - ~1ms, minimal breathing room):
 await new Promise(r => setImmediate(r));
 
-// AFTER (forces full event loop cycle):
+// AFTER (minimum ~1-4ms delay gives React time to render):
 await new Promise(r => setTimeout(r, 0));
 ```
 
@@ -339,8 +356,9 @@ Each fix was verified by parsing the actual patched code:
 
 ```
 ✅ Fix 1: setTimeout instead of setImmediate
-   → setImmediate runs in check phase (5), setTimeout in timers phase (1)
-   → React's 32ms throttle uses setTimeout, so yields must too
+   → setImmediate is ~2x faster than setTimeout(0) (914 vs 445 ops/sec)
+   → setTimeout(0)'s minimum ~1-4ms delay gives React breathing room to render
+   → See: stackoverflow.com/questions/24117267
 
 ✅ Fix 2: Yield helper with abort check
    → Centralized helper: yieldWithAbortCheck()
@@ -388,7 +406,7 @@ const yieldWithAbortCheck = async () => {
 ```
 
 Simple, but critical. It:
-1. Yields to the **timers phase** (where React renders)
+1. Yields with a minimum ~1-4ms delay (gives React breathing room)
 2. Checks for abort signals (responsive cancellation)
 3. Throws the proper abort error type
 
