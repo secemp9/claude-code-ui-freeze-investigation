@@ -1,0 +1,32 @@
+{
+  "detectedWrappers": [
+    {
+      "name": "v",
+      "count": 2539,
+      "definedAt": 3
+    },
+    {
+      "name": "k",
+      "count": 2189,
+      "definedAt": 5
+    }
+  ],
+  "runtimeSymbols": [
+    "IcK",
+    "LcK",
+    "sc6",
+    "o",
+    "oc6",
+    "Rg",
+    "v",
+    "_q",
+    "k",
+    "CA",
+    "ScK",
+    "BiA"
+  ],
+  "firstModuleIndex": 8,
+  "totalModules": 4728,
+  "totalSymbols": 18986,
+  "totalDependencyEdges": 25699
+}

@@ -1,0 +1,213 @@
+// Module: Gx4
+// Dependencies: ox, MSA
+
+import { __$ } from "../state.js";
+const { IcK, LcK, sc6, o, oc6, Rg, v, _q, k, CA, ScK, BiA } = __$;
+
+var Gx4 = v((ujw, _x4) => {
+  var Zk9 = CA("node:util"),
+    hY6 = CA("node:stream"),
+    Wk9 = __$.ox();
+  __$.MSA();
+  var Dk9 = Zk9.debuglog("sharp"),
+    j7A = function (A, K) {
+      if (arguments.length === 1 && !Wk9.defined(A)) throw Error("Invalid input");
+      if (!(this instanceof j7A)) return new j7A(A, K);
+      return hY6.Duplex.call(this), this.options = {
+        topOffsetPre: -1,
+        leftOffsetPre: -1,
+        widthPre: -1,
+        heightPre: -1,
+        topOffsetPost: -1,
+        leftOffsetPost: -1,
+        widthPost: -1,
+        heightPost: -1,
+        width: -1,
+        height: -1,
+        canvas: "crop",
+        position: 0,
+        resizeBackground: [0, 0, 0, 255],
+        useExifOrientation: !1,
+        angle: 0,
+        rotationAngle: 0,
+        rotationBackground: [0, 0, 0, 255],
+        rotateBeforePreExtract: !1,
+        flip: !1,
+        flop: !1,
+        extendTop: 0,
+        extendBottom: 0,
+        extendLeft: 0,
+        extendRight: 0,
+        extendBackground: [0, 0, 0, 255],
+        extendWith: "background",
+        withoutEnlargement: !1,
+        withoutReduction: !1,
+        affineMatrix: [],
+        affineBackground: [0, 0, 0, 255],
+        affineIdx: 0,
+        affineIdy: 0,
+        affineOdx: 0,
+        affineOdy: 0,
+        affineInterpolator: this.constructor.interpolators.bilinear,
+        kernel: "lanczos3",
+        fastShrinkOnLoad: !0,
+        tint: [-1, 0, 0, 0],
+        flatten: !1,
+        flattenBackground: [0, 0, 0],
+        unflatten: !1,
+        negate: !1,
+        negateAlpha: !0,
+        medianSize: 0,
+        blurSigma: 0,
+        precision: "integer",
+        minAmpl: 0.2,
+        sharpenSigma: 0,
+        sharpenM1: 1,
+        sharpenM2: 2,
+        sharpenX1: 2,
+        sharpenY2: 10,
+        sharpenY3: 20,
+        threshold: 0,
+        thresholdGrayscale: !0,
+        trimBackground: [],
+        trimThreshold: -1,
+        trimLineArt: !1,
+        gamma: 0,
+        gammaOut: 0,
+        greyscale: !1,
+        normalise: !1,
+        normaliseLower: 1,
+        normaliseUpper: 99,
+        claheWidth: 0,
+        claheHeight: 0,
+        claheMaxSlope: 3,
+        brightness: 1,
+        saturation: 1,
+        hue: 0,
+        lightness: 0,
+        booleanBufferIn: null,
+        booleanFileIn: "",
+        joinChannelIn: [],
+        extractChannel: -1,
+        removeAlpha: !1,
+        ensureAlpha: -1,
+        colourspace: "srgb",
+        colourspacePipeline: "last",
+        composite: [],
+        fileOut: "",
+        formatOut: "input",
+        streamOut: !1,
+        keepMetadata: 0,
+        withMetadataOrientation: -1,
+        withMetadataDensity: 0,
+        withIccProfile: "",
+        withExif: {},
+        withExifMerge: !0,
+        resolveWithObject: !1,
+        jpegQuality: 80,
+        jpegProgressive: !1,
+        jpegChromaSubsampling: "4:2:0",
+        jpegTrellisQuantisation: !1,
+        jpegOvershootDeringing: !1,
+        jpegOptimiseScans: !1,
+        jpegOptimiseCoding: !0,
+        jpegQuantisationTable: 0,
+        pngProgressive: !1,
+        pngCompressionLevel: 6,
+        pngAdaptiveFiltering: !1,
+        pngPalette: !1,
+        pngQuality: 100,
+        pngEffort: 7,
+        pngBitdepth: 8,
+        pngDither: 1,
+        jp2Quality: 80,
+        jp2TileHeight: 512,
+        jp2TileWidth: 512,
+        jp2Lossless: !1,
+        jp2ChromaSubsampling: "4:4:4",
+        webpQuality: 80,
+        webpAlphaQuality: 100,
+        webpLossless: !1,
+        webpNearLossless: !1,
+        webpSmartSubsample: !1,
+        webpPreset: "default",
+        webpEffort: 4,
+        webpMinSize: !1,
+        webpMixed: !1,
+        gifBitdepth: 8,
+        gifEffort: 7,
+        gifDither: 1,
+        gifInterFrameMaxError: 0,
+        gifInterPaletteMaxError: 3,
+        gifReuse: !0,
+        gifProgressive: !1,
+        tiffQuality: 80,
+        tiffCompression: "jpeg",
+        tiffPredictor: "horizontal",
+        tiffPyramid: !1,
+        tiffMiniswhite: !1,
+        tiffBitdepth: 8,
+        tiffTile: !1,
+        tiffTileHeight: 256,
+        tiffTileWidth: 256,
+        tiffXres: 1,
+        tiffYres: 1,
+        tiffResolutionUnit: "inch",
+        heifQuality: 50,
+        heifLossless: !1,
+        heifCompression: "av1",
+        heifEffort: 4,
+        heifChromaSubsampling: "4:4:4",
+        heifBitdepth: 8,
+        jxlDistance: 1,
+        jxlDecodingTier: 0,
+        jxlEffort: 7,
+        jxlLossless: !1,
+        rawDepth: "uchar",
+        tileSize: 256,
+        tileOverlap: 0,
+        tileContainer: "fs",
+        tileLayout: "dz",
+        tileFormat: "last",
+        tileDepth: "last",
+        tileAngle: 0,
+        tileSkipBlanks: -1,
+        tileBackground: [255, 255, 255, 255],
+        tileCentre: !1,
+        tileId: "https://example.com/iiif",
+        tileBasename: "",
+        timeoutSeconds: 0,
+        linearA: [],
+        linearB: [],
+        debuglog: q => {
+          this.emit("warning", q), Dk9(q);
+        },
+        queueListener: function (q) {
+          j7A.queue.emit("change", q);
+        }
+      }, this.options.input = this._createInputDescriptor(A, K, {
+        allowStream: !0
+      }), this;
+    };
+  Object.setPrototypeOf(j7A.prototype, hY6.Duplex.prototype);
+  Object.setPrototypeOf(j7A, hY6.Duplex);
+  function jk9() {
+    let A = this.constructor.call(),
+      {
+        debuglog: K,
+        queueListener: q,
+        ...Y
+      } = this.options;
+    if (A.options = structuredClone(Y), A.options.debuglog = K, A.options.queueListener = q, this._isStreamInput()) this.on("finish", () => {
+      this._flattenBufferIn(), A.options.input.buffer = this.options.input.buffer, A.emit("finish");
+    });
+    return A;
+  }
+  Object.assign(j7A.prototype, {
+    clone: jk9
+  });
+  _x4.exports = j7A;
+});
+
+// Register to shared state
+__$.Gx4 = Gx4;
