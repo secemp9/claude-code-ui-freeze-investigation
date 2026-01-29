@@ -18,8 +18,8 @@ import * as t from '@babel/types';
 const traverse = _traverse.default || _traverse;
 const generate = _generate.default || _generate;
 
-const INPUT_FILE = process.argv[2] || './package/augment.mjs';
-const OUTPUT_DIR = process.argv[3] || './output/split-generic';
+const INPUT_FILE = process.argv[2] || './input/bundle.js';
+const OUTPUT_DIR = process.argv[3] || './output/split';
 
 // Standard JS globals to never rewrite
 const JS_GLOBALS = new Set([
