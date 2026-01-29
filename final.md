@@ -6,15 +6,11 @@
 
 ## The Moment My Terminal Froze
 
-Last week, I was using Claude Code to refactor a complex codebase. I asked it to spawn a subagent for a parallel task. The cursor blinked once, twice... then nothing. My terminal was frozen solid. Not slow. Not laggy. *Frozen*.
+Since a couple days now, if not months, I noticed Claude code kept having these issues, yes, the good ol' flickering is still there, but there is a new one: freezing. I noticed it every day at this point, and just today, I asked it to spawn a subagent for a parallel task. The cursor blinked once, twice... then nothing. Honestly I'm used to it at this point but, for some reasons I was incredibly frustrated you see, and seeing my terminal was frozen solid and the UI being completely unresponsive...broke something in me.
 
-I waited. Five seconds. Ten seconds. The UI was completely unresponsive.
+If you've used Claude Code version on recent versions (2.1.23 and lower), you've probably experienced this. And I wanted to know why. (I was incredibly frustrated)
 
-Then suddenly, everything caught up at once - a flood of output, spinner animations playing in fast-forward, like a video buffering and then jumping ahead. The task completed, but the experience was broken.
-
-If you've used Claude Code version 2.1.23, you've probably experienced this. And I wanted to know why.
-
-**A note before we begin:** I'm presenting this as cleanly as I can, but the actual investigation was messier. I went down several wrong paths - initially thought it was a React batching issue, then suspected memory pressure, then got lost in the async iterator implementation for a while. What follows is the cleaned-up version. I might still be wrong about some details, and I'd genuinely appreciate corrections.
+**A note before we begin:** I'm presenting this as cleanly as I can, but the actual investigation was messier. I went down several wrong paths - initially thought it was a React batching issue, then suspected memory pressure, then got lost in the async iterator implementation for a while. What follows is the cleaned-up version. I might still be wrong about some details, and I'd genuinely appreciate any corrections.
 
 ---
 
@@ -22,11 +18,11 @@ If you've used Claude Code version 2.1.23, you've probably experienced this. And
 
 In this deep-dive, I'll walk you through:
 
-1. **The ironic origin** of this bug (spoiler: Claude probably caused it)
+1. **The ironic origin** of this bug (spoiler: Claude probably caused it, fork found in kitchen)
 2. **How to extract readable code** from an 11MB minified bundle using AST analysis
-3. **The exact technical root cause** - and why `setImmediate` vs `setTimeout` matters more than you think
+3. **The exact technical root cause** - and why `setImmediate` vs `setTimeout` matters more than we think
 4. **A working fix** verified through stress tests
-5. **Lessons for AI-assisted development** - where Claude excels and where it fails
+5. **Lessons for AI-assisted development** - where Claude (read llm to be general) excels and where it (they) fails
 
 
 ---
@@ -44,24 +40,24 @@ Here's my tweet that started this investigation:
 > and this is because, they tried to use claude code to fix it, but knowing the failure mode of the thing, instead it used less yield statements in the code, now causing freezing of the UI instead
 >
 > this is on version 2.1.23 btw
-
+https://x.com/secemp9/status/2016872881045581842?s=20
 Let me unpack this.
 
-**The previous bug:** Claude Code's UI was too *spammy* - rendering constantly, flickering, using excessive CPU. [@SIGKITTEN](https://twitter.com/SIGKITTEN) documented this in detail.
+**The previous bug:** Claude Code's UI was too *spammy* - rendering constantly, flickering, using excessive CPU. [@SIGKITTEN](https://twitter.com/SIGKITTEN) mentioned this in detail.
 
-**The "fix":** Someone used Claude to fix it. This isn't speculation - Boris Cherny, who leads Claude Code development at Anthropic, has [publicly documented](https://x.com/bcherny/status/2007179832300581177) that they use Claude to build Claude Code. The fix reduced render spam by adding fewer yield points.
+**The "fix":** Someone used Claude to fix it. I just can't prove it. 
+meme_dexter I just can't prove it here
+what am I saying, this isn't speculation - Boris Cherny, who leads Claude Code development at Anthropic, has [publicly documented](https://x.com/bcherny/status/2007179832300581177) that they use Claude code to build Claude Code. The fix reduced render spam by adding fewer yield points which is a very claude coded solution imo
 
-**The new bug:** They went too far. Now there are *zero* yields during long operations, causing the UI to freeze completely.
+**The new bug:** Actually worse, now there are far too few yields during long operations, causing the UI to freeze completely.
 
-This is a perfect example of how AI can understand a problem superficially ("too many renders → reduce renders") without grasping the nuance ("but you still need *some* renders during long operations").
-
-The cure became worse than the disease.
+This is a perfect example of how most models/llm can understand a problem superficially ("too many renders → reduce renders") without grasping the nuance ("but you still need *some* renders during long operations"). Or maybe it's another instance of llm lazyness.
 
 ---
 
 ## Part 2: Extracting the Code
 
-Claude Code is distributed as an npm package, but you can't just read the source - it's bundled into a single 11MB minified JavaScript file. Here's how I extracted it.
+Claude Code is distributed as an npm package, but you can't just read the source - it's bundled into a single 11MB minified JavaScript blob. Here's how I extracted it.
 
 ### Step 1: Get the Package Without Installing
 
@@ -70,7 +66,8 @@ npm pack @anthropic-ai/claude-code --pack-destination .
 tar -xzf anthropic-ai-claude-code-2.1.23.tgz
 ```
 
-You now have `package/cli.js` - an 11.09 MB wall of minified code. Unreadable by humans.
+You now have `package/cli.js` - an 11.09 MB wall of minified code. Not really readable as it is.
+Unless you think outside the box (wdym there is no box?)
 
 ### Step 2: AST-Based Splitting
 
@@ -82,6 +79,11 @@ I maintain a toolkit called `ast-deobf-tools` for exactly this situation. (It's 
 4. **Tracks** dependencies between modules
 5. **Creates** a runtime bridge (`__$`) that wires everything back together
 
+It's built to be as general as possible, and is also the reason why I learned that Babel actually does NOT do streaming on the nodes and instead hold everything into memory, but that's for another time.
+
+---
+
+how to use:
 ```bash
 node generic-dependency-splitter.js ../package/cli.js ../output/split \
   --preserve-names --create-index
@@ -96,6 +98,7 @@ Creating runtime bridge...
 Writing index.js...
 Done! Split into 4728 files
 ```
+and there you go
 
 ### Step 3: Hash Verification
 
@@ -171,7 +174,7 @@ That fourth point is the subtle killer. Or at least, I *think* it is - this is t
 
 *This section is my best attempt at explaining what I observed. If you know Node.js internals better than I do, I'd welcome corrections.*
 
-This is where it gets technical, but stay with me - this is the core insight.
+This is I believe, the core points:
 
 Node.js processes callbacks in phases:
 
@@ -453,15 +456,6 @@ The patched code is included in the repo alongside this post. It passes all orig
 - 4,728 modules extracted and analyzed
 - Event loop phases, React rendering, memory safety, concurrency - all verified
 
-### What You Can Do
-
-1. **If you're affected:** The fix is documented. Apply it to your local installation or wait for Anthropic to patch it.
-
-2. **If you're interested in the tooling:** The AST splitting tool I built is included in the `tool/` directory of this repo.
-
-3. **If you're using AI to write code:** Remember this case. Verify the parts that require deep runtime understanding.
-
-
 ---
 
 ## Appendix: Files Changed
@@ -492,7 +486,7 @@ The patched code is included in the repo alongside this post. It passes all orig
 
 ---
 
-*Written after mass reverse engineering with Claude Opus 4.5 + 44 subagents. The irony of using Claude to fix Claude's bug is not lost on me.*
+*Written after mass reverse engineering with Claude Opus 4.5 + 44 subagents. The irony of using Claude code to fix Claude code's bugs that was introduced with Claude code is not lost on me.*
 
 ---
 
@@ -500,15 +494,17 @@ The patched code is included in the repo alongside this post. It passes all orig
 
 Look, I know how this goes. Someone at Anthropic reads this, and the conversation becomes "how do we make the bundle harder to reverse engineer" instead of "how do we fix bugs faster."
 
-Maybe they add heavier obfuscation. Maybe LLM-based detection. Maybe string hashing like they already do server-side to block alternative clients from Max subscriptions.
+Maybe they add heavier obfuscation. Maybe LLM-based detection. Maybe string hashing like they already do server-side to block alternative clients from Max subscriptions outside Claude code.
 
 Here's the thing though: it's JavaScript. It has to run in a JS engine. The engine has to understand it. So the structure is always there - you're just hiding it under layers. AST analysis doesn't care if you rename functions to `_0x4f2a`. It sees the structure. And if obfuscation gets heavy enough that current models struggle, well, you can train a model specifically on `obfuscated → clean` pairs. The AST work I showed here would generate that training data pretty easily.
 
+The thing is, ***if it can be run, then it can be parsed***, and with someone with enough pluck, it is completely possible
+
 This isn't me saying "I'm unbeatable" - it's just... the nature of client-side code. Someone will always be able to look at it.
 
-The part I actually care about: Anthropic just acquired Bun. OpenAI launched Codex. Cursor and Windsurf are growing. The competitive landscape is real. And the moat for developer tools has never been obfuscation - it's trust, quality, and actually listening to your community.
+The part I actually care about: Anthropic acquired Bun recently but stopped supporting and even preventing usage of their subscription outside of Claude code. OpenAI has Codex and fully support Opencode through their subscription services, among other alternative agent/client. Cursor and Windsurf are growing too and we even have Gravity, etc. The competitive landscape is real. And the moat was never in the tools - it's the trust, quality, and community.
 
-I spent a weekend fixing a bug in production code. That's not adversarial. That's what engaged users do. The question is whether that gets treated as a threat or as free QA.
+I spent a good couple hours fixing this. That's not adversarial. That's what engaged users do. The question is whether that gets treated as a threat or as free QA.
 
 Anyway, that's just my external take. I don't know what's happening internally, what constraints exist, what priorities are competing. Maybe there are good reasons for everything.
 
