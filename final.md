@@ -47,7 +47,7 @@ Let me unpack this.
 
 **The "fix":** Someone used Claude to fix it. I just can't prove it.
 
-<img width="436" height="333" alt="image" src="https://github.com/user-attachments/assets/5194873a-6df7-4b51-8c30-beac2db66d49" />
+<img width="436" height="333" alt="image" src="https://i.tribune.com.pk/media/images/james-doakes1753344838-0/james-doakes1753344838-0-436x333.webp" />
 
 what am I saying, this isn't speculation - Boris Cherny, who leads Claude Code development at Anthropic, has [publicly documented](https://x.com/bcherny/status/2007179832300581177) that they use Claude code to build Claude Code. The fix reduced render spam by adding fewer yield points which is a very claude coded solution imo
 
