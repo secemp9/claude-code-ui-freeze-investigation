@@ -528,4 +528,6 @@ But hey, what do I know.
 
 I've tried to be thorough, but I'm one person working with obfuscated code and limited context. If you spot errors - technical mistakes, misunderstandings of the event loop, incorrect assumptions about Anthropic's architecture - please let me know. I'd rather be corrected than confidently wrong.
 
+Also, just to be clear about what I *don't* have access to: the original source code, commit history, internal telemetry, or any context about why things were written the way they were. I'm working backwards from a minified bundle and observing behavior. Someone at Anthropic with actual access to the codebase could probably figure out way more than I did - like whether this was actually Claude-generated code, what the original intent was, and whether there are other affected code paths I missed. If you're that person and you're reading this: hi, sorry for the extra work, and I hope this at least points you in the right direction.
+
 *Last updated: January 2026*
