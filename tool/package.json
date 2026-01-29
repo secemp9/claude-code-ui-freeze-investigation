@@ -1,0 +1,27 @@
+{
+  "name": "ast-deobf-tools",
+  "version": "1.0.0",
+  "description": "JavaScript/Node.js deobfuscation toolkit using AST (Abstract Syntax Tree) analysis. A collection of tools for parsing, splitting, analyzing, verifying, and reverse-engineering obfuscated JavaScript code.",
+  "main": "analyze-packages.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/secemp9/ast-deobf-tools.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/secemp9/ast-deobf-tools/issues"
+  },
+  "homepage": "https://github.com/secemp9/ast-deobf-tools#readme",
+  "dependencies": {
+    "@babel/generator": "^7.28.6",
+    "@babel/parser": "^7.28.6",
+    "@babel/traverse": "^7.28.6",
+    "@babel/types": "^7.28.6"
+  }
+}

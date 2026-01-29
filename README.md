@@ -21,6 +21,10 @@ Claude Code's terminal UI freezes during subagent operations because the Task to
 │   │   ├── dZ1.js                  # Task tool (PATCHED)
 │   │   └── ... (4,728 modules)
 │   └── functions.js                # Contains O(n) slice fix
+├── tool/
+│   ├── generic-dependency-splitter.js  # AST-based bundle splitter
+│   ├── package.json                    # Dependencies (babel)
+│   └── README.md                       # Tool documentation
 ├── patches/
 │   ├── dZ1.js                      # Just the patched module
 │   └── functions-OWA-fix.patch     # The O(n) fix
@@ -33,10 +37,11 @@ Claude Code's terminal UI freezes during subagent operations because the Task to
 
 ## The Splitting Tool
 
-The AST-based deobfuscation toolkit used to split the bundle: **[ast-deobf-tools](https://github.com/secemp9/ast-deobf-tools)**
+The AST-based splitting tool is included in `tool/`:
 
 ```bash
-node generic-dependency-splitter.js ../package/cli.js ../output/split --preserve-names --create-index
+cd tool && npm install
+node generic-dependency-splitter.js ../original/cli.js ../output --preserve-names --create-index
 # Output: 4,728 modules extracted
 ```
 

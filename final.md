@@ -457,7 +457,7 @@ The patched code is included in the repo alongside this post. It passes all orig
 
 1. **If you're affected:** The fix is documented. Apply it to your local installation or wait for Anthropic to patch it.
 
-2. **If you're interested in the tooling:** [`ast-deobf-tools`](https://github.com/secemp9/ast-deobf-tools) is available for your own reverse engineering projects.
+2. **If you're interested in the tooling:** The AST splitting tool I built is included in the `tool/` directory of this repo.
 
 3. **If you're using AI to write code:** Remember this case. Verify the parts that require deep runtime understanding.
 
@@ -486,8 +486,7 @@ The patched code is included in the repo alongside this post. It passes all orig
 
 ## Tools & References
 
-- **[ast-deobf-tools](https://github.com/secemp9/ast-deobf-tools)** - Custom AST-based JavaScript deobfuscation toolkit I built for this and other reverse engineering projects
-- **generic-dependency-splitter.js** - The main splitting tool, part of ast-deobf-tools
+- **tool/generic-dependency-splitter.js** - The AST-based bundle splitter I built for this investigation (included in this repo)
 - **Babel** - JavaScript parsing and AST manipulation
 - **Node.js Event Loop** - [Official Documentation](https://nodejs.org/en/docs/guides/event-loop-timers-and-nexttick/)
 
